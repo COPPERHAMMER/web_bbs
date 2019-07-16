@@ -1,0 +1,242 @@
+{% extends "base_nav.html" %}
+{% block title %}查看话题 - {{ topic.title }}{% endblock %}
+
+{% block main %}
+    <div id="sidebar">
+        <div class="panel">
+
+            <div class="header">
+                <span class="col_fade">作者信息</span>
+            </div>
+            <div class="inner">
+                <div class="user_card">
+                    <div>
+                        <a class="user_avatar" href="/user/{{ author.id }}">
+                            <img alt="用户头像" src="{{ author.image }}" title="{{ author.username }}">
+                        </a>
+                        <span class="user_name"><a class="dark"
+                                                   href="/user/{{ author.id }}">{{ author.username }}</a></span>
+
+                        <div class="space clearfix"></div>
+                        <span class="signature">
+        {{ author.signature }}
+    </span>
+                        {% if visitor.id != author.id %}
+                            <div class="space clearfix"></div>
+                            <a href="{{ url_for('mail.send_back',receiver_id=author.id) }}" id="create_topic_btn">
+                                <span class="span-success">私信</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel">
+            <div class="inner">
+                <a href="{{ url_for('my_topic.new',  token=token) }}" id="create_topic_btn">
+                    <span class="span-success">发布话题</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">友情链接</span>
+            </div>
+            <div class="inner">
+                <ol class="friendship-community">
+                    <li>
+                        <a href="https://www.python.org/" target="_blank">
+                            <img src="/images/python-logo.png">
+                        </a>
+                    </li>
+                    <div class="sep10"></div>
+                </ol>
+            </div>
+        </div>
+
+
+        <div class='panel'>
+            <div class='header'>
+                <span class='col_fade'>本站作者</span>
+            </div>
+            <div class='inner cnode-app-download'>
+                <img width='200' src="/images/my_weixin.png">
+                <br/>
+                扫一扫添加Swordman
+                <br>
+                <a href="https://github.com/imjerry1994/web_bbs">本站源码</a>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <p class="controls" style="color:#a9302a">{{ get_flashed_messages()[0] }}</p>
+        <div class='panel'>
+            <div class='header topic_header'>
+        <span class="topic_full_title">
+			{{ topic.title }}
+      	</span>
+                <div class="changes">
+            <span>
+                发布于 {{ topic.created_time | format_time }}
+            </span>
+                    <span>
+                        {% set u = topic | get_author %}
+                作者 <a href="/user/{{ u.id }}">{{ u.username }}</a>
+        	</span>
+                    <span>
+          	    {{ topic.views }} 次浏览
+        	</span>
+                    <span>
+                来自 <a href="{{ url_for(".index", board_id=board.id) }}">{{ board.title }}</a>
+            </span>
+                </div>
+            </div>
+            <div class='inner topic'>
+                <div class='topic_content'>
+                    <div class="markdown-text">{{ topic.content | content_with_clickable_name }}</div>
+                </div>
+
+
+            </div>
+            <div class="cell">
+                <div class="changes">
+                    <span>
+                        最后修改于 {{ topic.last_edit_time | format_time }}
+                    </span>
+                </div>
+                {% if visitor.id == author.id %}
+                    <form id='reply_form' action="{{ url_for('my_topic.delete',token=token) }}" method="post">
+                        <input type="hidden" name="topic_id" value="{{ topic.id }}">
+
+                        <div class='editor_buttons'>
+                            <input class='span-primary submit_btn' type="submit" style="background-color: #da4f49"
+                                   value="删除话题">
+                        </div>
+                    </form>
+
+                    <form id='reply_form' action="{{ url_for('my_topic.edit',topic_id=topic.id) }}" method="get">
+                        <div class='editor_buttons'>
+                            <input class='span-primary submit_btn' type="submit" style="background-color: #da4f49"
+                                   value="编辑话题">
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <div class='panel'>
+            <div class='header'>
+                <span class='col_fade'>
+                    {{ replies | count }} 回复
+                </span>
+            </div>
+            {% for r in replies %}
+                {% set rep_user = r.user() %}
+                <div class='cell reply_area reply_item'>
+                    <div class='user_info'>
+                        <a class="user_avatar" href="/user/{{ rep_user.id }}">
+                            <img alt="用户头像" src="{{ rep_user.image }}" title="{{ rep_user.username }}">
+                        </a>
+                        <a class='dark reply_author'>
+                            <a href="/user/{{ rep_user.id }}">{{ rep_user.username }}</a>
+                        </a>
+                        <a class="reply_time">
+                            {{ loop.index }}/{{ loop.length }} 楼 •
+                            <span>{{ r.created_time | format_time }}</span>
+                        </a>
+                    </div>
+                    <div class='user_action'>
+                        {% if visitor.id == r.user_id or visitor.id == topic.user_id %}
+                            <form id='reply_form' action="{{ url_for('my_reply.delete',token=token) }}"
+                                  method="post">
+                                <input type="hidden" name="reply_id" value="{{ r.id }}">
+
+                                <div class='editor_buttons'>
+                                    <input class='span-primary submit_btn' type="submit"
+                                           style="background-color: #da4f49"
+                                           value="删除评论">
+                                </div>
+                            </form>
+                        {% endif %}
+                        <span>
+                        <i class="fa up_btn
+                          fa-thumbs-o-up
+                          invisible" title="喜欢"></i>
+                        <span class="up-count">
+                        </span>
+                    </span>
+                    </div>
+                    <div class='reply_content from-leiwei1991'>
+                        <div class="markdown-text">{{ r.content | content_with_clickable_name }}</div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class='panel'>
+            <div class='header'>
+                <span class='col_fade'>添加回复</span>
+            </div>
+
+            <div class='inner reply'>
+                <form id='reply_form' action="{{ url_for('my_reply.add',token=token) }}" method="post">
+                    <input type="hidden" name="topic_id" value="{{ topic.id }}">
+
+                    <textarea class='editor' name="content" rows='8' required></textarea>
+
+                    <div class='editor_buttons'>
+                        <input class='span-primary submit_btn' type="submit" data-loading-text="回复中.." value="回复">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="//cdn.bootcss.com/prism/1.8.0/themes/prism.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/marked/0.3.19/marked.min.js"></script>
+    <script src="https://cdn.bootcss.com/prism/1.13.0/prism.js"></script>
+    <script src="https://cdn.bootcss.com/prism/1.13.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        var e = function (sel) {
+            return document.querySelector(sel)
+        }
+
+        var es = function (sel) {
+            return document.querySelectorAll(sel)
+        }
+
+        var markContents = function () {
+            // markdown -> html 的处理放在高亮前面
+            // 因为高亮是针对 html 格式的
+            // lang -> language 不需要转 prism 自动转了
+            var contentDivs = es('.markdown-text')
+            for (var i = 0; i < contentDivs.length; i++) {
+                var contentDiv = contentDivs[i]
+                console.log('pre marked', contentDiv.textContent)
+                var content = marked(contentDiv.textContent)
+                console.log('after marked', content)
+                contentDiv.innerHTML = content
+            }
+        }
+
+        var highlight = function () {
+            // 自动加载对应的语言 不然要手动加入各个语言的 js
+            Prism.plugins.autoloader.languages_path = 'https://cdn.bootcss.com/prism/1.13.0/components/'
+        }
+
+        var __main = function () {
+            markContents()
+            highlight()
+        }
+
+        __main()
+
+    </script>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base_nav.html" %}
+{% block title %}话题广场{% endblock %}
+{% block main %}
+    <!-- sidebar -->
+    <div id="sidebar">
+        {% if user %}
+            <div class="panel">
+
+                <div class="header">
+                    <span class="col_fade">个人信息</span>
+                </div>
+                <div class="inner">
+                    <div class="user_card">
+                        <div>
+                            <a class="user_avatar" href="/user/{{ user.id }}">
+                                <img alt="用户头像" src="{{ user.image }}" title="{{ user.username }}">
+                            </a>
+                            <span class="user_name"><a class="dark"
+                                                       href="/user/{{ user.id }}">{{ user.username }}</a></span>
+
+                            <div class="space clearfix"></div>
+                            <span class="signature">
+        {{ user.signature }}
+    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="inner">
+                    <a href="{{ url_for('my_topic.new', board_id=current_bid) }}"
+                       id="create_topic_btn">
+                        <span class="span-success">发布话题</span>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">友情链接</span>
+            </div>
+            <div class="inner">
+                <ol class="friendship-community">
+                    <li>
+                        <a href="https://www.python.org/" target="_blank">
+                            <img src="/images/python-logo.png">
+                        </a>
+                    </li>
+                    <div class="sep10"></div>
+                </ol>
+            </div>
+        </div>
+
+        <div class='panel'>
+            <div class='header'>
+                <span class='col_fade'>本站作者</span>
+            </div>
+            <div class='inner cnode-app-download'>
+                <img width='200' src="/images/my_weixin.png">
+                <br/>
+                扫一扫添加Swordman
+                <br>
+                <a href="https://github.com/imjerry1994/web_bbs">本站源码</a>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div class="panel">
+            <div class="header">
+                {% if current_bid == -1 %}
+                    <a href="/topic"
+                       class="topic-tab current-tab">全部</a>
+                {% else %}
+                    <a href="/topic"
+                       class="topic-tab">全部</a>
+                {% endif %}
+
+                {% for b in bs %}
+                    {% if b.id == current_bid %}
+                        <a href="/topic?board_id={{ b.id }}"
+                           class="topic-tab current-tab">{{ b.title }}</a>
+                    {% else %}
+                        <a href="/topic?board_id={{ b.id }}"
+                           class="topic-tab">{{ b.title }}</a>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+
+            <div class="inner no-padding">
+                <div id="topic_list">
+                    {% for topic in recent_topics %}
+                        <div class="cell">
+                            {% set author = topic | get_author %}
+                            <a class="user_avatar pull-left" href="/user/{{ author.id }}">
+                                <img alt="用户头像" src="{{ author.image }}" title="{{ author.username }}">
+                            </a>
+                            <span class="reply_count pull-left">
+                    <span class="count_of_replies" title="回复数">
+                      {{ topic.reps }}
+                    </span>
+                    <span class="count_seperator">/</span>
+                    <span class="count_of_visits" title="点击数">{{ topic.views }}</span>
+                      </span>
+
+
+                            <a class="last_time pull-right" href="/topic/{{ topic.id }}">
+                                {% set rep = topic.last_reply() %}
+                                {% if rep %}
+                                    {% set rep_author = rep | get_author %}
+                                    <img class="user_small_avatar" alt="用户头像" src="{{ rep_author.image }}">
+                                {% endif %}
+                                <span class="last_active_time">{{ topic.last_active_time | how_long_ago }}</span>
+                            </a>
+
+                            <div class="topic_title_wrapper">
+
+                                <a class="topic_title" href="/topic/{{ topic.id }}" title="{{ topic.title }}">
+                                    {{ topic.title }}
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}个人私信{% endblock %}
+{% block main %}
+    <div id="content">
+        <div class="panel">
+            <div class="header">
+                <ul class="breadcrumb">
+                    <li><a href="/">主页</a><span class="divider">/</span></li>
+                    <li style="float:right;"><a href="{{ url_for(".sent_box") }}">发件箱</a></li>
+                    <li class='active'>私信</li>
+                </ul>
+            </div>
+
+            <div class="inner post">
+                {% if received %}
+                    <div class="topic_list">
+
+                        {% for r in received %}
+                            {% set sender = r | get_sender %}
+                            <div class="cell">
+
+                                <a class="user_avatar pull-left" href="/user/{{ sender.id }}">
+                                    <img alt="用户头像" src="{{ sender.image }}" title="{{ sender.username }}">
+                                </a>
+                                <span class="user_avatar pull-left">&nbsp;&nbsp;
+                        </span>
+                                <a class="last_time pull-right">
+                                    <span class="last_active_time">{{ r.created_time | format_time }}</span>
+                                </a>
+                                <div class="topic_title_wrapper">
+                                    <a class="topic_title" href="{{ url_for('.view', id = r.id) }}"> {{ r.title }}
+                                        [From: {{ sender.username }}]</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                {% else %}
+                    <a class="dark">暂无新私信</a>
+                {% endif %}
+                <div class="cell more">
+                    <a class="dark" href="{{ url_for('.inbox') }}">收件箱»</a>
+                </div>
+            </div>
+        </div>
+        <div class="panel">{{ get_flashed_messages()[0] }}</div>
+        <div class="panel">
+            <div class="header">
+                发送私信
+            </div>
+
+            <div class="inner post">
+                <form id="create_topic_form" method="post" action="{{ url_for('.add',token=token) }}">
+                    <fieldset>
+        <textarea autofocus class='span9' id='title'
+                  name='title' rows='1'
+                  placeholder="请输入私信标题" required></textarea>
+
+                        <textarea autofocus class='span9' id='title'
+                                  name='receiver_name' rows='1'
+                                  placeholder="请输入收件人用户名" required></textarea>
+
+                        <div class='markdown_editor in_editor'>
+                            <div class='markdown_in_editor'>
+                                <textarea class='editor' name='content' rows='20'
+                                          placeholder='支持 Markdown 语法, 请注意标记代码' required></textarea>
+                                <div class='editor_buttons'>
+                                    <input type="submit" class='span-primary submit_btn' data-loading-text="提交中"
+                                           value="发送">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

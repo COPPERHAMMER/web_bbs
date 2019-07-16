@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swordman BBS - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+<!-- navbar -->
+<div class='navbar'>
+
+    <div class='navbar-inner'>
+        <div class='container'>
+            <a class='brand' href='/'>
+                <img src="/images/Swordman">
+            </a>
+            <ul class='nav pull-right'>
+                <li><a href='{{ url_for('my_topic.index') }}'>话题</a></li>
+                {% set cur_user = current_user() %}
+                {% if not cur_user %}
+                    <li><a href='{{ url_for('index.login_page') }}'>注册</a></li>
+                    <li><a href='{{ url_for('index.login_page') }}'>登录</a></li>
+                {% else %}
+                    <li>
+                        <a href="/info" target="">
+                            通知 <q style="color: #0e90d2">{{ unread_info_num_of_user(cur_user) }}</q>
+                        </a>
+                    </li>
+                    <li><a href="/mail" target="">私信<q
+                            style="color: #0e90d2">{{ unread_message_num_of_user(cur_user) }}</q></a>
+                    </li>
+                    <li><a href="/setting" target="">设置</a></li>
+                    <li><a href='{{ url_for('my_user.profile') }}'>{{ cur_user.username }}</a></li>
+                    <li><a href='{{ url_for('index.logout') }}'>注销</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="main">
+    <!-- sidebar -->
+    <div id="sidebar">
+        <div class="panel">
+
+            <div class="header">
+                <span class="col_fade">个人信息</span>
+            </div>
+            <div class="inner">
+                <div class="user_card">
+                    <div>
+                        <a class="user_avatar" href="/user/{{ user.id }}">
+                            <img alt="用户头像" src="{{ user.image }}" title="{{ user.username }}">
+                        </a>
+                        <span class="user_name"><a class="dark"
+                                                   href="/user/{{ user.id }}">{{ user.username }}</a></span>
+
+                        <div class="space clearfix"></div>
+                        <span class="signature">
+        {{ user.signature }}
+    </span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel">
+            <div class="inner">
+                <a href="{{ url_for('my_topic.new') }}" id="create_topic_btn">
+                    <span class="span-success">发布话题</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">友情链接</span>
+            </div>
+            <div class="inner">
+                <ol class="friendship-community">
+                    <li>
+                        <a href="https://www.python.org/" target="_blank">
+                            <img src="/images/python-logo.png">
+                        </a>
+                    </li>
+                    <div class="sep10"></div>
+                </ol>
+            </div>
+        </div>
+
+
+        <div class='panel'>
+            <div class='header'>
+                <span class='col_fade'>本站作者</span>
+            </div>
+            <div class='inner cnode-app-download'>
+                <img width='200' src="/images/my_weixin.png">
+                <br>
+                扫一扫添加Swordman
+                <br>
+                <a href="https://github.com/imjerry1994/web_bbs">本站源码</a>
+            </div>
+        </div>
+    </div>
+
+    {% block main %}
+    {% endblock %}
+</div>
+
+<script>
+    // 当网页向下滑动 20px 出现"返回顶部" 按钮
+    window.onscroll = function () {
+        scrollFunction()
+    };
+
+    function scrollFunction() {
+        console.log(121);
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("btnTop").style.display = "block";
+        } else {
+            document.getElementById("btnTop").style.display = "none";
+        }
+    }
+
+    // 点击按钮，返回顶部
+    function returnTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+</script>
+<div>
+    <button onclick="returnTop()" id="btnTop" title="返回顶部">返回顶部</button>
+</div>
+</body>
+</html>

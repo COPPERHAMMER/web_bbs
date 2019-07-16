@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}系统通知{% endblock %}
+{% block main %}
+    <div id="content">
+        <div class="panel">
+            <div class="header">
+                <ul class="breadcrumb">
+                    <li><a href="/">主页</a><span class="divider">/</span></li>
+                    <li class='active'>系统通知</li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="header">
+                <ul class="breadcrumb">
+                    <li class='active'>未读通知</li>
+                </ul>
+            </div>
+            <div class="inner post">
+            <form id='reply_form' action="{{ url_for('info.set_read',token=token) }}" method="post">
+                        <input type="hidden" name="owner_id" value="{{ user.id }}">
+
+                        <div class='editor_buttons'>
+                            <input class='span-primary submit_btn' type="submit" style="background-color: #da4f49"
+                                   value="全部标记为已读">
+                        </div>
+                    </form>
+                {% if unread %}
+                    <div class="topic_list">
+
+                        {% for i in unread %}
+                            <div class="cell">
+                                <a class="last_time pull-right">
+                                    <span class="last_active_time">{{ i.created_time | format_time }}</span>
+                                </a>
+                                <div class="topic_title_wrapper">
+                                    <a class="topic_title" href="{{ url_for('info.detail',info_id=i.id) }}"> {{ i.title }}</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a class="dark">空空如也</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="panel">
+            <div class="header">
+                <ul class="breadcrumb">
+                    <li class='active'>已读通知
+                    </li>
+
+                </ul>
+            </div>
+            <div class="inner post">
+            <form id='reply_form' action="{{ url_for('info.sweep',token=token) }}" method="post">
+                        <input type="hidden" name="owner_id" value="{{ user.id }}">
+
+                        <div class='editor_buttons'>
+                            <input class='span-primary submit_btn' type="submit" style="background-color: #da4f49"
+                                   value="清空已读通知">
+                        </div>
+                    </form>
+                {% if been_read %}
+                    <div class="topic_list">
+
+                        {% for i in been_read %}
+                            <div class="cell">
+                                <a class="last_time pull-right">
+                                    <span class="last_active_time">{{ i.created_time | format_time }}</span>
+                                </a>
+                                <div class="topic_title_wrapper">
+                                    <a class="topic_title" href="{{ url_for('info.detail',info_id=i.id) }}"> {{ i.title }}</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a class="dark">空空如也</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="panel">{{ get_flashed_messages()[0] }}</div>
+    </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}发件箱{% endblock %}
+{% block main %}
+    <div id="content">
+        <div class="panel">
+            <div class="header">
+                <ul class="breadcrumb">
+                    <li><a href="/">主页</a><span class="divider">/</span></li>
+                    <li><a href="/mail">私信</a><span class="divider">/</span></li>
+                    <li class='active'>发件箱</li>
+                </ul>
+            </div>
+            <div class="inner post">
+                <div class="topic_list">
+                {% if sent %}
+                    {% for s in sent %}
+                        <div class="cell">
+                            <div class="topic_title_wrapper">
+                                <a class="topic_title" href="{{ url_for('.view', id = s.id) }}"> {{ s.title }}  [To: {{ (s | get_receiver ).username }}]</a>
+                                <span style="float:right;">{{ s.created_time | format_time }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <a class="dark">发件箱空空如也</a>
+                {% endif %}
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}

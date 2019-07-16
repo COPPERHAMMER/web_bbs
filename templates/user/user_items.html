@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}@{{ user.username }}的主页{% endblock %}
+{% block main %}
+    <div id="content">
+        <div class="panel">
+            <div class="header">
+                <ul class="breadcrumb">
+                    <li><a href="/">主页</a><span class="divider">/</span></li>
+                    <li><a href="/user/{{ user.id }}">{{ user.username }} 的主页</a></li>
+                </ul>
+            </div>
+            <div class="inner userinfo">
+                <div class="user_big_avatar">
+                    <img alt="用户头像" src="{{ user.image }}" class="user_avatar" title="{{ user.username }}">
+                </div>
+                <div class='user_profile'>
+                </div>
+                <p class="col_fade">用户注册时间 {{ user.created_time | how_long_ago }}</p>
+
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">{{ user.username }} {{ itemtype }}的话题</span>
+            </div>
+            <div class="inner post">
+                <p class="controls" style="color:#a9302a">{{ get_flashed_messages()[0] }}</p>
+                {% if topics %}
+                    <div class="topic_list">
+                        {% for topic in topics %}
+                            <div class="cell">
+
+                                {% set author = topic | get_author %}
+                                <a class="user_avatar pull-left" href="/user/{{ author.id }}">
+                                    <img alt="用户头像" src="{{ author.image }}" title="{{ author.username }}">
+                                </a>
+
+                                <span class="reply_count pull-left">
+    <span class="count_of_replies" title="回复数">
+      {{ topic.reps }}
+    </span>
+    <span class="count_seperator">/</span>
+    <span class="count_of_visits" title="点击数">
+      {{ topic.views }}
+    </span>
+  </span>
+
+
+                                <a class="last_time pull-right" href="/topic/{{ topic.id }}">
+                                    {% set s = topic.last_reply() %}
+                                    {% if s %}
+                                        <img class="user_small_avatar" alt="用户头像" src="{{ (s | get_author).image }}">
+                                    {% endif %}
+                                    <span class="last_active_time">{{ topic.last_active_time | how_long_ago }}</span>
+                                </a>
+
+                                <div class="topic_title_wrapper">
+
+                                    <a class="topic_title" href="/topic/{{ topic.id }}" title="{{ topic.title }}">
+                                        {{ topic.title }}
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a class="dark">不问世事，惜墨如金</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

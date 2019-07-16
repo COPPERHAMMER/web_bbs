@@ -1,0 +1,87 @@
+{% extends "base_nav.html" %}
+{% block title %}欢迎{% endblock %}
+{% block main %}
+    <div id="sidebar">
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">友情链接</span>
+            </div>
+            <div class="inner">
+                <ol class="friendship-community">
+                    <li>
+                        <a href="https://www.python.org/" target="_blank">
+                            <img src="/images/python-logo.png">
+                        </a>
+                    </li>
+                    <div class="sep10"></div>
+                </ol>
+            </div>
+        </div>
+
+
+        <div class='panel'>
+            <div class='header'>
+                <span class='col_fade'>本站作者</span>
+            </div>
+            <div class='inner cnode-app-download'>
+                <img width='200' src="/images/my_weixin.png">
+                <br>
+                扫一扫添加Swordman
+                <br>
+                <a href="https://github.com/imjerry1994/web_bbs">本站源码</a>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div class='panel'>
+            <p class="controls" style="color:#a9302a">{{ get_flashed_messages()[0] }}</p>
+            <div class='header'>
+                <span class='col_fade'>注册</span>
+            </div>
+            <div class='inner post'>
+
+                <form class="form-horizontal" method="post" action="{{ url_for('.register_check_mail') }}">
+
+
+                    <div class="control-group">
+                        <label class="control-label">注册邮箱</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" name="email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions" method="post" action="{{ url_for('index.register_check_mail') }}">
+                        <input type="submit" class="span-primary" value="发送验证码">
+                    </div>
+                </form>
+            </div>
+
+            <div class='header'>
+                <span class='col_fade'>登陆</span>
+            </div>
+            <div class='inner'>
+                <form class="form-horizontal" method="post" action="{{ url_for('.login_post') }}">
+
+                    <div class="control-group">
+                        <label class="control-label">用户名</label>
+                        <div class="controls">
+                            <input type="text" class="input-xlarge" name="username" required value="test">
+                            <p class="input-xlarge" style="color:#a9302a">测试阶段：用户名test，密码123</p>
+                            <p class="input-xlarge" style="color:#a9302a">Have fun!</p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">密码</label>
+                        <div class="controls">
+                            <input type="password" class="input-xlarge" name="password" required value="123">
+                        </div>
+                    </div>
+                    <li class="controls"><a href="/forget">忘记密码？</a></li>
+                    <div class="form-actions">
+                        <input type="submit" class="span-primary" value="登录">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

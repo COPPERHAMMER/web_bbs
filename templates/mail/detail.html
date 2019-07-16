@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}查看私信 - {{ message.title }}{% endblock %}
+{% block main %}
+    <div id="content">
+        <div class='panel'>
+            <div class="header">
+                <ul class="breadcrumb">
+                    <li><a href="/">主页</a><span class="divider">/</span></li>
+                    <li><a href="/mail">私信</a><span class="divider">/</span></li>
+                    <li class='active'>查看私信</li>
+                </ul>
+                <div class="header">
+                    <div class='header topic_header'>
+                        <span class="topic_full_title">{{ message.title }}</span>
+                        <div class="changes">
+                            <span>发送时间 {{ message.created_time | format_time }}</span>
+                            {% set r = message | get_receiver %}
+                            {% set s = message | get_sender %}
+                            <span>发件人 <a href="/user/{{ s.id }}">{{ s.username }}</a></span>
+                            <span>收件人 <a href="/user/{{ r.id }}">{{ r.username }}</a></span>
+                        </div>
+                    </div>
+
+                    <div class='inner topic'>
+                        <div class='topic_content'>
+                            <div class="markdown-text">{{ message.content }}</div>
+                        </div>
+                    </div>
+                    {% if r.id == user.id %}
+                        <br>
+{#                        <a href="/mail/emmiter?receiver_id={{ s.id }}" id="create_topic_btn">#}
+                         <a href="{{ url_for('.send_back',receiver_id=s.id) }}" id="create_topic_btn">
+                            <span class='span-primary submit_btn'>回信</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="//cdn.bootcss.com/prism/1.8.0/themes/prism.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/marked/0.3.19/marked.min.js"></script>
+    <script src="https://cdn.bootcss.com/prism/1.13.0/prism.js"></script>
+    <script src="https://cdn.bootcss.com/prism/1.13.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        var e = function (sel) {
+            return document.querySelector(sel)
+        }
+
+        var es = function (sel) {
+            return document.querySelectorAll(sel)
+        }
+
+        var markContents = function () {
+            // markdown -> html 的处理放在高亮前面
+            // 因为高亮是针对 html 格式的
+            // lang -> language 不需要转 prism 自动转了
+            var contentDivs = es('.markdown-text')
+            for (var i = 0; i < contentDivs.length; i++) {
+                var contentDiv = contentDivs[i]
+                console.log('pre marked', contentDiv.textContent)
+                var content = marked(contentDiv.textContent)
+                console.log('after marked', content)
+                contentDiv.innerHTML = content
+            }
+        }
+
+        var highlight = function () {
+            // 自动加载对应的语言 不然要手动加入各个语言的 js
+            Prism.plugins.autoloader.languages_path = 'https://cdn.bootcss.com/prism/1.13.0/components/'
+        }
+
+        var __main = function () {
+            markContents()
+            highlight()
+        }
+
+        __main()
+
+    </script>
+{% endblock %}
